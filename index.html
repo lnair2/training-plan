@@ -384,11 +384,11 @@ function renderSchedule() {
            </div>
            ${s.hr ? `<div class="session-hr" style="color:${d.color}">♥ ${s.hr}</div>` : ''}
            <div class="session-notes">${s.notes}</div>
-           <div class"session-sets">
+           <div class="session-notes">
             <ul>
              ${s.sets && s.sets.length > 0 ? ( s?.sets.map(item => `
                  <li>${item}</li>` )
-              ) : null}
+              ) : ''}
             </ul>
            </div>
          </div>
