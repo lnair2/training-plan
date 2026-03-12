@@ -386,9 +386,9 @@ function renderSchedule() {
            <div class="session-notes">${s.notes}</div>
            <div class"session-sets">
                <ul>
-                ${s.sets.map((item, index) => (
+                ${s.sets.map(item => (
                   // Each item needs a unique key prop
-                 item
+                 <li>${item}</li>
                 ))}
               </ul>
            </div>
