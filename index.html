@@ -210,18 +210,52 @@ const data = {
      { week: "Race week", action: "3–4 easy miles Monday, 2 miles with 4 strides Wednesday, rest Thursday–Friday. Trust the base." }
    ],
    schedule: [
-     { day: "Monday", tag: "REST", tagColor: "#6B7280", sessions: [{ type: "Full Rest", duration: "—", hr: null, notes: "Complete rest. Let HRV stabilize. No structured training." }] },
-     { day: "Tuesday", tag: "SWIM + STRENGTH", tagColor: "#3B82F6", sessions: [{ type: "Swim — Aerobic Base", duration: "30–40 min", hr: "Easy, conversational", notes: "Drills + steady laps. No sprinting. Focus on technique." }, { type: "Strength", duration: "30 min", hr: null, notes: "Lower body, moderate load. Squats, deadlifts, rows, core. No HIIT.", 
-                                                                                                                                                                                                                                      sets: "Barbell hip thrust 4x6-8",
-         "Single leg RDL 3x8",
-         "Split Squat 3x8",
-         "Leg press 3x8",
-                                                                                                                                                                                                                                                
-                                                                                                                                                                                                                                      "Cable Crunch 4x8"
-
-        ]
-                                                                                                                                                                                                                                     }] },
-     { day: "Wednesday", tag: "RUN — SPEED", tagColor: "#10B981", sessions: [{ type: "Speed Work (green HRV only)", duration: "~50 min total", hr: "Z4 during reps", notes: "10 min warmup + 4–6×800m at 5K effort + 10 min cooldown. Skip or replace with easy 4 miles if HRV is amber/red." }] },
+     { 
+      day: "Monday", 
+      tag: "REST", 
+      tagColor: "#6B7280", 
+      sessions: [{ 
+       type: "Full Rest", 
+       duration: "—", 
+       hr: null, 
+       notes: "Complete rest. Let HRV stabilize. No structured training." 
+      }] 
+     },
+     { 
+      day: "Tuesday", 
+      tag: "SWIM + STRENGTH", 
+      tagColor: "#3B82F6", 
+      sessions: [{ 
+       type: "Swim — Aerobic Base", 
+       duration: "30–40 min", 
+       hr: "Easy, conversational", 
+       notes: "Drills + steady laps. No sprinting. Focus on technique."
+      },
+      {
+       type: "Strength", 
+       duration: "30 min", 
+       hr: null, 
+       notes: "Lower body, moderate load. Squats, deadlifts, rows, core. No HIIT.", 
+       sets: [
+        "Barbell hip thrust 4x6-8",
+        "Single leg RDL 3x8",
+        "Split Squat 3x8",
+        "Leg press 3x8",
+        "Cable Crunch 4x8"
+       ]
+      }]
+     },
+     { 
+      day: "Wednesday", 
+      tag: "RUN — SPEED", 
+      tagColor: "#10B981", 
+      sessions: [{ 
+       type: "Speed Work (green HRV only)", 
+       duration: "~50 min total", 
+       hr: "Z4 during reps", 
+       notes: "10 min warmup + 4–6×800m at 5K effort + 10 min cooldown. Skip or replace with easy 4 miles if HRV is amber/red." 
+      }] 
+     },
      { 
       day: "Thursday", 
       tag: "BIKE + OPTIONAL STRENGTH", 
