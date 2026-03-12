@@ -1,3 +1,4 @@
+'use strict';
 import { useState } from "react";
 
 const phases = [
@@ -148,6 +149,7 @@ const recovery_stack = [
  { icon: "💧", label: "Hydration", detail: "Cold weather masks thirst. Drink proactively. Aim for pale yellow urine, especially on long bike days." },
  { icon: "🧘", label: "Mobility", detail: "10 min post-run hip flexor + hamstring work. Especially important after speed sessions." }
 ];
+
 
 export default function TrainingPlan() {
  const [activePhase, setActivePhase] = useState(0);
@@ -368,4 +370,9 @@ export default function TrainingPlan() {
    </div>
  );
 }
+
+// Find the DOM container and render the component
+const domContainer = document.querySelector('#react-app-root');
+const root = ReactDOM.createRoot(domContainer);
+root.render(<TrainingPlan />);
 
