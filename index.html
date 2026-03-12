@@ -384,14 +384,13 @@ function renderSchedule() {
            </div>
            ${s.hr ? `<div class="session-hr" style="color:${d.color}">♥ ${s.hr}</div>` : ''}
            <div class="session-notes">${s.notes}</div>
-           ${s.sets && s.sets > 0 && `
            <div class"session-sets">
-               <ul>
-                ${s?.sets.map(item => `
-                 <li>${item}</li>
-                `).join('')}
-              </ul>
-           </div>`}
+            <ul>
+             ${s.sets && s.sets > 0 && ( s?.sets.map(item => `
+                 <li>${item}</li>` )
+              }
+            </ul>
+           </div>
          </div>
        `).join('')}
      </div>
