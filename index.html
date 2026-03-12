@@ -213,7 +213,7 @@ const data = {
      { 
       day: "Monday", 
       tag: "REST", 
-      tagColor: "#6B7280", 
+      tagColor: "#6B7280",
       sessions: [{ 
        type: "Full Rest", 
        duration: "—", 
@@ -384,6 +384,14 @@ function renderSchedule() {
            </div>
            ${s.hr ? `<div class="session-hr" style="color:${d.color}">♥ ${s.hr}</div>` : ''}
            <div class="session-notes">${s.notes}</div>
+           <div class"session-sets">
+               <ul>
+                ${s.sets.map((item, index) => (
+                  // Each item needs a unique key prop
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+           </div>
          </div>
        `).join('')}
      </div>
