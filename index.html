@@ -386,9 +386,9 @@ function renderSchedule() {
            <div class="session-notes">${s.notes}</div>
            <div class"session-sets">
             <ul>
-             ${s.sets && s.sets > 0 && ( s?.sets.map(item => `
+             ${s.sets && s.sets.length > 0 ? ( s?.sets.map(item => `
                  <li>${item}</li>` )
-              )}
+              ) : null}
             </ul>
            </div>
          </div>
