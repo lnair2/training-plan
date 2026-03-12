@@ -388,14 +388,14 @@ function renderSchedule() {
             <ul>
              ${s.sets && s.sets.length > 0 ? ( s?.sets.map(item => `
                  <li>${item}</li>` )
-              ) : ''}
+              ).join('') : ''}
             </ul>
            </div>
          </div>
-       `)}
+       `).join('')}
      </div>
    </div>
- `);
+ `).join('');
 }
 
 function renderTaper() {
