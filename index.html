@@ -1,340 +1,334 @@
 <!DOCTYPE html>
-<html lang="en">
-<body>
-  <!-- ... existing HTML ... -->
-       <div id="react-app-root">
-import { useState } from "react";
 
-const phases = [
- {
-   id: "foundation",
-   label: "Foundation Phase",
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triathlon Training Plan · Chicago</title>
+<style>
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+ body {
+   font-family: Georgia, serif;
+   background: #0A0A0F;
+   min-height: 100vh;
+   color: #E8E4DC;
+   padding-bottom: 60px;
+ }
+ header {
+   background: linear-gradient(135deg, #0A0A0F 0%, #111827 50%, #0A0A0F 100%);
+   border-bottom: 1px solid #1F2937;
+   padding: 40px 24px 32px;
+   text-align: center;
+   position: relative;
+   overflow: hidden;
+ }
+ #header-glow {
+   position: absolute; inset: 0;
+   background: radial-gradient(ellipse at 50% 0%, #2DD4BF18 0%, transparent 70%);
+   pointer-events: none;
+   transition: background 0.3s;
+ }
+ .overline { font-size: 11px; letter-spacing: 4px; color: #2DD4BF; margin-bottom: 12px; text-transform: uppercase; transition: color 0.3s; }
+ h1 { font-size: clamp(24px, 5vw, 36px); font-weight: 400; margin: 0 0 8px; letter-spacing: -0.5px; color: #F9F6F0; }
+ .subtitle { font-size: 14px; color: #6B7280; margin: 0; font-style: italic; }
+ .phase-btns { display: flex; gap: 12px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+ .phase-btn {
+   padding: 10px 20px; border-radius: 40px;
+   border: 1.5px solid #2D2D3A;
+   background: transparent; color: #6B7280;
+   cursor: pointer; font-size: 13px; letter-spacing: 0.5px;
+   transition: all 0.2s; font-family: Georgia, serif;
+ }
+ .phase-btn.active-foundation { border-color: #2DD4BF; background: #2DD4BF20; color: #2DD4BF; }
+ .phase-btn.active-build { border-color: #F97316; background: #F9731620; color: #F97316; }
+
+.container { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+.phase-bar {
+margin: 28px 0 8px; padding: 16px 20px; border-radius: 12px;
+background: #111827; border: 1px solid #2DD4BF40;
+display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;
+transition: border-color 0.3s;
+}
+.phase-bar-label { font-size: 11px; color: #6B7280; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+.phase-bar-value { font-size: 14px; color: #2DD4BF; transition: color 0.3s; }
+.phase-bar-goal { font-size: 14px; color: #D1C9BC; }
+
+.run-note {
+margin: 0 0 20px; padding: 14px 18px; border-radius: 10px;
+background: #0D1A14; border: 1px solid #10B98140;
+font-size: 13px; color: #9CA3AF; line-height: 1.6; font-style: italic;
+}
+.run-note span { color: #10B981; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #0D0D14; border-radius: 10px; padding: 4px; }
+.tab-btn {
+flex: 1; padding: 8px 4px; border-radius: 8px; border: none;
+background: transparent; color: #6B7280;
+cursor: pointer; font-size: 11px; letter-spacing: 0.5px;
+transition: all 0.2s; font-family: Georgia, serif;
+}
+.tab-btn.active { background: #1F2937; color: #E8E4DC; }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.day-card { border-radius: 12px; background: #0D0D14; border: 1px solid #1A1A28; overflow: hidden; margin-bottom: 8px; transition: all 0.2s; }
+.day-card.open { background: #111827; border-color: #2D3748; }
+.day-header {
+width: 100%; padding: 14px 18px;
+background: none; border: none; cursor: pointer;
+display: flex; align-items: center; gap: 12px; text-align: left;
+font-family: Georgia, serif;
+}
+.day-name { width: 90px; font-size: 13px; color: #9CA3AF; }
+.day-tag { padding: 3px 10px; border-radius: 20px; font-size: 10px; letter-spacing: 1.5px; font-family: monospace; flex: 1; }
+.day-arrow { color: #4B5563; font-size: 16px; transition: transform 0.2s; }
+.day-card.open .day-arrow { transform: rotate(180deg); }
+
+.day-body { display: none; padding: 0 18px 18px; flex-direction: column; gap: 12px; }
+.day-card.open .day-body { display: flex; }
+
+.session { padding: 14px 16px; border-radius: 8px; background: #0A0A0F; margin-bottom: 10px; }
+.session-top { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.session-name { font-size: 14px; color: #E8E4DC; font-weight: 600; }
+.session-dur { font-size: 12px; color: #6B7280; }
+.session-hr { font-size: 12px; margin-bottom: 6px; }
+.session-notes { font-size: 13px; color: #9CA3AF; font-style: italic; }
+
+.taper-card { padding: 16px 18px; border-radius: 10px; background: #111827; border: 1px solid #1F2937; margin-bottom: 10px; }
+.taper-week { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.taper-action { font-size: 14px; color: #D1C9BC; line-height: 1.6; }
+
+.hrv-card { padding: 16px 18px; border-radius: 10px; background: #111827; border: 1px solid #1F2937; margin-bottom: 8px; }
+.hrv-if { font-size: 12px; color: #EF4444; letter-spacing: 0.5px; margin-bottom: 8px; }
+.hrv-then { font-size: 13px; color: #D1C9BC; line-height: 1.6; }
+
+.recovery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.recovery-card { padding: 18px; border-radius: 10px; background: #0D1117; border: 1px solid #1F2937; }
+.recovery-icon { font-size: 24px; margin-bottom: 10px; }
+.recovery-label { font-size: 13px; color: #E8E4DC; margin-bottom: 6px; font-weight: 600; }
+.recovery-detail { font-size: 12px; color: #6B7280; line-height: 1.6; }
+
+.footer-note { margin-top: 40px; padding: 20px; border-radius: 12px; background: #0D1117; border: 1px solid #1F2937; text-align: center; font-size: 12px; color: #6B7280; line-height: 1.9; }
+.footer-note span { color: #E8E4DC; }
+
+.helper-text { font-size: 13px; color: #6B7280; margin-bottom: 12px; font-style: italic; }
+.italic-note { margin-top: 8px; padding: 14px 18px; border-radius: 10px; background: #0D1117; border: 1px solid #1F2937; font-size: 13px; color: #6B7280; font-style: italic; line-height: 1.7; }
+</style>
+
+</head>
+<body>
+
+<header>
+ <div id="header-glow"></div>
+ <div class="overline" id="phase-overline">Triathlon Training Plan · Chicago</div>
+ <h1>Your Road to August</h1>
+ <p class="subtitle">Half Marathon · May &nbsp;|&nbsp; Sprint/Olympic Triathlon · August</p>
+ <div class="phase-btns">
+   <button class="phase-btn active-foundation" onclick="setPhase('foundation')">Foundation Phase</button>
+   <button class="phase-btn" onclick="setPhase('build')">Build Phase</button>
+ </div>
+</header>
+
+<div class="container">
+
+ <div class="phase-bar" id="phase-bar">
+   <div>
+     <div class="phase-bar-label">Dates</div>
+     <div class="phase-bar-value" id="phase-dates">Now → Late April</div>
+   </div>
+   <div style="flex:1;min-width:200px;">
+     <div class="phase-bar-label">Phase Goal</div>
+     <div class="phase-bar-goal" id="phase-goal">Stabilize HRV, sharpen run speed, build swim &amp; bike base</div>
+   </div>
+ </div>
+
+ <div class="run-note" id="run-note">
+   🏃‍♀️ <span>Running strategy:</span> <span id="run-note-text">You already have the distance. Running is in maintenance + sharpening mode. Swim and bike are where you're building something new — that's where the adaptation stress lives right now.</span>
+ </div>
+
+ <div class="tabs">
+   <button class="tab-btn active" onclick="setTab('schedule')">Weekly Schedule</button>
+   <button class="tab-btn" onclick="setTab('taper')" id="taper-tab-btn">May Half Taper</button>
+   <button class="tab-btn" onclick="setTab('hrv')">HRV Rules</button>
+   <button class="tab-btn" onclick="setTab('recovery')">Recovery</button>
+ </div>
+
+ <!-- SCHEDULE TAB -->
+
+ <div id="tab-schedule" class="tab-content active"></div>
+
+ <!-- TAPER TAB -->
+
+ <div id="tab-taper" class="tab-content">
+   <p class="helper-text" id="taper-intro">3-week taper leading into the May half marathon:</p>
+   <div id="taper-cards"></div>
+   <div class="italic-note">The fitness is already built. Taper is about arriving fresh, not gaining more fitness. Resist the urge to squeeze in extra sessions.</div>
+ </div>
+
+ <!-- HRV TAB -->
+
+ <div id="tab-hrv" class="tab-content">
+   <p class="helper-text">Check your Garmin HRV every morning before deciding on the day's session intensity.</p>
+   <div class="hrv-card"><div class="hrv-if">IF: HRV low / red on Garmin</div><div class="hrv-then">→ Wednesday speed session becomes an easy 4-mile run or is skipped entirely. Never push intervals on a red day.</div></div>
+   <div class="hrv-card"><div class="hrv-if">IF: HRV unstable 3+ days in a row</div><div class="hrv-then">→ Take an unplanned down week. Cut all volume by 40%. Prioritize sleep above everything.</div></div>
+   <div class="hrv-card"><div class="hrv-if">IF: Easy run HR above 155</div><div class="hrv-then">→ Stop and walk until it drops. The session is already complete — more miles won't help.</div></div>
+   <div class="hrv-card"><div class="hrv-if">IF: Green HRV + feeling strong</div><div class="hrv-then">→ Execute the plan as written. Resist the urge to add extra.</div></div>
+ </div>
+
+ <!-- RECOVERY TAB -->
+
+ <div id="tab-recovery" class="tab-content">
+   <div class="recovery-grid">
+     <div class="recovery-card"><div class="recovery-icon">😴</div><div class="recovery-label">Sleep</div><div class="recovery-detail">8–9 hrs. Your #1 performance lever. Consistent wake time matters as much as duration for HRV.</div></div>
+     <div class="recovery-card"><div class="recovery-icon">🥩</div><div class="recovery-label">Post-workout protein</div><div class="recovery-detail">20–30g within 45 min of any session. Critical after speed work and strength.</div></div>
+     <div class="recovery-card"><div class="recovery-icon">☀️</div><div class="recovery-label">Vitamin D</div><div class="recovery-detail">Take with your fattiest meal for best absorption. Ask your doctor to recheck levels in spring — Chicago winters often need higher doses.</div></div>
+     <div class="recovery-card"><div class="recovery-icon">💧</div><div class="recovery-label">Hydration</div><div class="recovery-detail">Cold weather masks thirst. Drink proactively. Aim for pale yellow urine, especially on long bike days.</div></div>
+     <div class="recovery-card"><div class="recovery-icon">🧘</div><div class="recovery-label">Mobility</div><div class="recovery-detail">10 min post-run hip flexor + hamstring work. Especially important after speed sessions.</div></div>
+   </div>
+ </div>
+
+ <div class="footer-note">
+   You already have the running distance. Now it's about <span>sharpening speed, building swim &amp; bike,</span><br>
+   and letting your body recover enough to actually absorb the training.
+ </div>
+
+</div>
+
+<script>
+const data = {
+ foundation: {
    dates: "Now → Late April",
    goal: "Stabilize HRV, sharpen run speed, build swim & bike base",
    color: "#2DD4BF",
-   accent: "#0F766E",
-   schedule: [
-     {
-       day: "Monday",
-       tag: "REST",
-       tagColor: "#6B7280",
-       sessions: [
-         { type: "Full Rest", duration: "—", hr: null, notes: "Complete rest. Let HRV stabilize. No structured training." }
-       ]
-     },
-     {
-       day: "Tuesday",
-       tag: "SWIM + STRENGTH",
-       tagColor: "#3B82F6",
-       sessions: [
-         { type: "Swim — Aerobic Base", duration: "30–40 min", hr: "Easy, conversational", notes: "Drills + steady laps. No sprinting. Focus on technique." },
-         { type: "Strength", duration: "30 min", hr: null, notes: "Full body, moderate load. Squats, deadlifts, rows, core. No HIIT." }
-       ]
-     },
-     {
-       day: "Wednesday",
-       tag: "RUN — SPEED",
-       tagColor: "#10B981",
-       sessions: [
-         { type: "Speed Work (green HRV only)", duration: "~50 min total", hr: "Z4 during reps", notes: "10 min warmup + 4–6×800m at 5K effort + 10 min cooldown. Skip or replace with easy 4 miles if HRV is amber/red." }
-       ]
-     },
-     {
-       day: "Thursday",
-       tag: "BIKE + OPTIONAL STRENGTH",
-       tagColor: "#F59E0B",
-       sessions: [
-         { type: "Bike — Tempo", duration: "45–60 min", hr: "155–165 for intervals", notes: "Mostly Z2 with 2×10 min at tempo. Your one mid-week hard bike effort." },
-         { type: "Strength (optional)", duration: "20 min", hr: null, notes: "Upper body + core only. Skip entirely if Wednesday speed session was hard." }
-       ]
-     },
-     {
-       day: "Friday",
-       tag: "EASY RUN",
-       tagColor: "#10B981",
-       sessions: [
-         { type: "Easy Run", duration: "4–5 miles", hr: "HR strictly < 145. Walk if it climbs.", notes: "MAF pace. This is recovery running, not training. Slow is correct." }
-       ]
-     },
-     {
-       day: "Saturday",
-       tag: "LONG BIKE or BRICK",
-       tagColor: "#EF4444",
-       sessions: [
-         { type: "Long Bike", duration: "60–90 min", hr: "Z2 — HR 140–155", notes: "Steady aerobic. Every 3rd week add a 15-min easy run off the bike (brick)." }
-       ]
-     },
-     {
-       day: "Sunday",
-       tag: "MEDIUM LONG RUN",
-       tagColor: "#10B981",
-       sessions: [
-         { type: "Medium Long Run", duration: "6–7 miles (build to 9–10 by late April)", hr: "HR < 150 strictly", notes: "Your base is already there — this maintains it. Walk breaks are fine. Not a race effort. Increase by ~0.5 mile every 2 weeks." }
-       ]
-     }
+   runNote: "You already have the distance. Running is in maintenance + sharpening mode. Swim and bike are where you're building something new — that's where the adaptation stress lives right now.",
+   taperTitle: "3-week taper leading into the May half marathon:",
+   taper: [
+     { week: "3 weeks out", action: "Drop total run volume 20%. Keep Wednesday speed session but shorten to 4×800m." },
+     { week: "2 weeks out", action: "Drop volume another 20%. Replace speed session with 2×1 mile at goal pace. Bike and swim stay normal." },
+     { week: "Race week", action: "3–4 easy miles Monday, 2 miles with 4 strides Wednesday, rest Thursday–Friday. Trust the base." }
    ],
-   runningNote: "You already have the distance. Running is in maintenance + sharpening mode. Swim and bike are where you're building something new — that's where the adaptation stress lives right now."
+   schedule: [
+     { day: "Monday", tag: "REST", tagColor: "#6B7280", sessions: [{ type: "Full Rest", duration: "—", hr: null, notes: "Complete rest. Let HRV stabilize. No structured training." }] },
+     { day: "Tuesday", tag: "SWIM + STRENGTH", tagColor: "#3B82F6", sessions: [{ type: "Swim — Aerobic Base", duration: "30–40 min", hr: "Easy, conversational", notes: "Drills + steady laps. No sprinting. Focus on technique." }, { type: "Strength", duration: "30 min", hr: null, notes: "Full body, moderate load. Squats, deadlifts, rows, core. No HIIT." }] },
+     { day: "Wednesday", tag: "RUN — SPEED", tagColor: "#10B981", sessions: [{ type: "Speed Work (green HRV only)", duration: "~50 min total", hr: "Z4 during reps", notes: "10 min warmup + 4–6×800m at 5K effort + 10 min cooldown. Skip or replace with easy 4 miles if HRV is amber/red." }] },
+     { day: "Thursday", tag: "BIKE + OPTIONAL STRENGTH", tagColor: "#F59E0B", sessions: [{ type: "Bike — Tempo", duration: "45–60 min", hr: "155–165 for intervals", notes: "Mostly Z2 with 2×10 min at tempo. Your one mid-week hard bike effort." }, { type: "Strength (optional)", duration: "20 min", hr: null, notes: "Upper body + core only. Skip entirely if Wednesday speed session was hard." }] },
+     { day: "Friday", tag: "EASY RUN", tagColor: "#10B981", sessions: [{ type: "Easy Run", duration: "4–5 miles", hr: "HR strictly < 145. Walk if it climbs.", notes: "MAF pace. This is recovery running, not training. Slow is correct." }] },
+     { day: "Saturday", tag: "LONG BIKE or BRICK", tagColor: "#EF4444", sessions: [{ type: "Long Bike", duration: "60–90 min", hr: "Z2 — HR 140–155", notes: "Steady aerobic. Every 3rd week add a 15-min easy run off the bike (brick)." }] },
+     { day: "Sunday", tag: "MEDIUM LONG RUN", tagColor: "#10B981", sessions: [{ type: "Medium Long Run", duration: "6–7 miles (build to 9–10 by late April)", hr: "HR < 150 strictly", notes: "Your base is already there — this maintains it. Walk breaks are fine. Not a race effort. Increase by ~0.5 mile every 2 weeks." }] }
+   ]
  },
- {
-   id: "build",
-   label: "Build Phase",
+ build: {
    dates: "Post-May Half → Late July",
    goal: "Race-specific triathlon volume, brick workouts, speed maintenance",
    color: "#F97316",
-   accent: "#C2410C",
-   schedule: [
-     {
-       day: "Monday",
-       tag: "REST",
-       tagColor: "#6B7280",
-       sessions: [{ type: "Full Rest", duration: "—", hr: null, notes: "Recovery from weekend volume. Protect this day." }]
-     },
-     {
-       day: "Tuesday",
-       tag: "RUN INTERVALS + STRENGTH",
-       tagColor: "#10B981",
-       sessions: [
-         { type: "Track / Tempo Run", duration: "50–60 min", hr: "Z4 intervals", notes: "4–6×800m or 3×1 mile at half marathon pace. Full warmup and cooldown." },
-         { type: "Strength", duration: "30 min", hr: null, notes: "Power focus — heavier, lower reps. Glutes, hamstrings, single-leg work for run economy." }
-       ]
-     },
-     {
-       day: "Wednesday",
-       tag: "SWIM",
-       tagColor: "#3B82F6",
-       sessions: [{ type: "Swim — Endurance + Open Water Sim", duration: "45 min", hr: "Easy–Moderate", notes: "Sighting practice, longer sets. Simulate race conditions." }]
-     },
-     {
-       day: "Thursday",
-       tag: "BIKE TEMPO",
-       tagColor: "#F59E0B",
-       sessions: [{ type: "Bike — Race Effort Sets", duration: "60–75 min", hr: "Z3–Z4", notes: "3×15 min at triathlon target pace with 5 min easy recovery between." }]
-     },
-     {
-       day: "Friday",
-       tag: "EASY RUN",
-       tagColor: "#10B981",
-       sessions: [{ type: "Easy Recovery Run", duration: "4–5 miles", hr: "HR < 145", notes: "Shake out the legs before the weekend. Genuinely easy — don't let it drift into tempo." }]
-     },
-     {
-       day: "Saturday",
-       tag: "BRICK WORKOUT",
-       tagColor: "#EF4444",
-       sessions: [{ type: "Bike + Run Brick", duration: "90 min bike + 20–30 min run", hr: "Z2–Z3 bike / easy run", notes: "Practice T2 transition. The run will feel strange off the bike — that's exactly what you're training." }]
-     },
-     {
-       day: "Sunday",
-       tag: "MEDIUM LONG RUN",
-       tagColor: "#10B981",
-       sessions: [{ type: "Medium Long Run", duration: "8–10 miles", hr: "HR < 155", notes: "Aerobic endurance maintenance. You have the base — protect it with easy pace." }]
-     }
+   runNote: "Speed is now maintained with Tuesday intervals. Sunday long run rebuilds back toward race distance. Bricks on Saturday are the key triathlon-specific work.",
+   taperTitle: "2-week taper leading into the August triathlon:",
+   taper: [
+     { week: "2 weeks out", action: "Drop run and bike volume 25%. Keep one speed session but half the reps. Swim stays normal — it doesn't fatigue legs." },
+     { week: "Race week", action: "Short easy run Monday, 20-min easy bike with 3 race-effort surges Wednesday, full rest Thursday–Friday. Light swim Saturday morning if it calms nerves." }
    ],
-   runningNote: "Speed is now maintained with Tuesday intervals. Sunday long run rebuilds back toward race distance. Bricks on Saturday are the key triathlon-specific work."
+   schedule: [
+     { day: "Monday", tag: "REST", tagColor: "#6B7280", sessions: [{ type: "Full Rest", duration: "—", hr: null, notes: "Recovery from weekend volume. Protect this day." }] },
+     { day: "Tuesday", tag: "RUN INTERVALS + STRENGTH", tagColor: "#10B981", sessions: [{ type: "Track / Tempo Run", duration: "50–60 min", hr: "Z4 intervals", notes: "4–6×800m or 3×1 mile at half marathon pace. Full warmup and cooldown." }, { type: "Strength", duration: "30 min", hr: null, notes: "Power focus — heavier, lower reps. Glutes, hamstrings, single-leg work for run economy." }] },
+     { day: "Wednesday", tag: "SWIM", tagColor: "#3B82F6", sessions: [{ type: "Swim — Endurance + Open Water Sim", duration: "45 min", hr: "Easy–Moderate", notes: "Sighting practice, longer sets. Simulate race conditions." }] },
+     { day: "Thursday", tag: "BIKE TEMPO", tagColor: "#F59E0B", sessions: [{ type: "Bike — Race Effort Sets", duration: "60–75 min", hr: "Z3–Z4", notes: "3×15 min at triathlon target pace with 5 min easy recovery between." }] },
+     { day: "Friday", tag: "EASY RUN", tagColor: "#10B981", sessions: [{ type: "Easy Recovery Run", duration: "4–5 miles", hr: "HR < 145", notes: "Shake out the legs before the weekend. Genuinely easy — don't let it drift into tempo." }] },
+     { day: "Saturday", tag: "BRICK WORKOUT", tagColor: "#EF4444", sessions: [{ type: "Bike + Run Brick", duration: "90 min bike + 20–30 min run", hr: "Z2–Z3 bike / easy run", notes: "Practice T2 transition. The run will feel strange off the bike — that's exactly what you're training." }] },
+     { day: "Sunday", tag: "MEDIUM LONG RUN", tagColor: "#10B981", sessions: [{ type: "Medium Long Run", duration: "8–10 miles", hr: "HR < 155", notes: "Aerobic endurance maintenance. You have the base — protect it with easy pace." }] }
+   ]
  }
-];
+};
 
-const maytaper = [
- { week: "3 weeks out", action: "Drop total run volume 20%. Keep Wednesday speed session but shorten to 4×800m." },
- { week: "2 weeks out", action: "Drop volume another 20%. Replace speed session with 2×1 mile at goal pace. Bike and swim stay normal." },
- { week: "Race week", action: "3–4 easy miles Monday, 2 miles with 4 strides Wednesday, rest Thursday–Friday. Trust the base." }
-];
+let currentPhase = 'foundation';
+let currentTab = 'schedule';
 
-const hrv_rules = [
- { condition: "HRV low / red on Garmin", action: "Wednesday speed session becomes an easy 4-mile run or is skipped entirely. Never push intervals on a red day." },
- { condition: "HRV unstable 3+ days in a row", action: "Take an unplanned down week. Cut all volume by 40%. Prioritize sleep above everything." },
- { condition: "Easy run HR above 155", action: "Stop and walk until it drops. The session is already complete — more miles won't help." },
- { condition: "Green HRV + feeling strong", action: "Execute the plan as written. Resist the urge to add extra." }
-];
+function setPhase(phase) {
+ currentPhase = phase;
+ const d = data[phase];
 
-const recovery_stack = [
- { icon: "😴", label: "Sleep", detail: "8–9 hrs. Your #1 performance lever. Consistent wake time matters as much as duration for HRV." },
- { icon: "🥩", label: "Post-workout protein", detail: "20–30g within 45 min of any session. Critical after speed work and strength." },
- { icon: "☀️", label: "Vitamin D", detail: "Take with your fattiest meal of the day for best absorption. Ask your doctor to recheck levels in spring — Chicago winters often need higher doses than standard." },
- { icon: "💧", label: "Hydration", detail: "Cold weather masks thirst. Drink proactively. Aim for pale yellow urine, especially on long bike days." },
- { icon: "🧘", label: "Mobility", detail: "10 min post-run hip flexor + hamstring work. Especially important after speed sessions." }
-];
+ // Update header glow + overline color
+ document.getElementById('header-glow').style.background = `radial-gradient(ellipse at 50% 0%, ${d.color}18 0%, transparent 70%)`;
+ document.getElementById('phase-overline').style.color = d.color;
 
-export default function TrainingPlan() {
- const [activePhase, setActivePhase] = useState(0);
- const [expandedDay, setExpandedDay] = useState(null);
- const [activeTab, setActiveTab] = useState("schedule");
- const phase = phases[activePhase];
+ // Phase bar
+ document.getElementById('phase-bar').style.borderColor = d.color + '40';
+ document.getElementById('phase-dates').style.color = d.color;
+ document.getElementById('phase-goal').textContent = d.goal;
+ document.getElementById('phase-dates').textContent = d.dates;
 
- return (
-   <div style="font-family: 'Georgia'; background: #0A0A0F; min-height: 100vh; color: #E8E4DC; padding-bottom: 60px">
-     <!-- Header -->
-     <div style="background: linear-gradient(135deg; border-bottom: 1px solid #1F2937; padding: 40px 24px 32px; text-align: center; position: relative; overflow: hidden">
-       <div style={{
-         position: "absolute", inset: 0,
-         background: `radial-gradient(ellipse at 50% 0%, ${phase.color}18 0%, transparent 70%)`,
-         pointerEvents: "none"
-       }} />
-       <div style="font-size: 11px; letter-spacing: 4px; color: phase.color; margin-bottom: 12px; text-transform: uppercase">
-         Triathlon Training Plan · Chicago
-       </div>
-       <h1 style="font-size: clamp(24px; font-weight: 400; margin: 0 0 8px; letter-spacing: -0.5px; color: #F9F6F0">
-         Your Road to August
-       </h1>
-       <p style="font-size: 14px; color: #6B7280; margin: 0; font-style: italic">
-         Half Marathon · May &nbsp;|&nbsp; Sprint/Olympic Triathlon · August
-       </p>
+ // Run note
+ document.getElementById('run-note-text').textContent = d.runNote;
 
-       <!-- Phase Selector -->
-       <div style="display: flex; gap: 12px; justify-content: center; margin-top: 28px; flex-wrap: wrap">
-         {phases.map((p, i) => (
-           <button key={p.id} onclick={() => { setActivePhase(i); setExpandedDay(null); }} style={{
-             padding: "10px 20px", borderRadius: "40px",
-             border: `1.5px solid ${i === activePhase ? p.color : "#2D2D3A"}`,
-             background: i === activePhase ? `${p.color}20` : "transparent",
-             color: i === activePhase ? p.color : "#6B7280",
-             cursor: "pointer", fontSize: "13px", letterSpacing: "0.5px", transition: "all 0.2s"
-           }}>
-             {p.label}
-           </button>
-         ))}
-       </div>
-     </div>
+ // Phase buttons
+ document.querySelectorAll('.phase-btn').forEach(b => {
+   b.className = 'phase-btn';
+ });
+ event.target.className = `phase-btn active-${phase}`;
 
-     <div style="max-width: 720px; margin: 0 auto; padding: 0 16px">
+ // Taper tab label
+ document.getElementById('taper-tab-btn').textContent = phase === 'foundation' ? 'May Half Taper' : 'Aug Taper';
+ document.getElementById('taper-intro').textContent = d.taperTitle;
 
-       <!-- Phase info bar -->
-       <div style={{
-         margin: "28px 0 8px", padding: "16px 20px", borderRadius: "12px",
-         background: "#111827", border: `1px solid ${phase.color}40`,
-         display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "center", justifyContent: "space-between"
-       }}>
-         <div>
-           <div style="font-size: 11px; color: #6B7280; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px">Dates</div>
-           <div style="font-size: 14px; color: phase.color">{phase.dates}</div>
-         </div>
-         <div style="flex: 1; min-width: 200px">
-           <div style="font-size: 11px; color: #6B7280; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px">Phase Goal</div>
-           <div style="font-size: 14px; color: #D1C9BC">{phase.goal}</div>
-         </div>
-       </div>
+ renderSchedule();
+ renderTaper();
+}
 
-       <!-- Running strategy callout -->
-       <div style="margin: 0 0 20px; padding: 14px 18px; border-radius: 10px; background: #0D1A14; border: 1px solid #10B98140; font-size: 13px; color: #9CA3AF; line-height: 1.6; font-style: italic">
-         🏃‍♀️ <span style="color: #10B981">Running strategy:</span> {phase.runningNote}
-       </div>
+function setTab(tab) {
+ currentTab = tab;
+ document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+ document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+ document.getElementById('tab-' + tab).classList.add('active');
+ event.target.classList.add('active');
+}
 
-       <!-- Tabs -->
-       <div style="display: flex; gap: 4px; margin-bottom: 20px; background: #0D0D14; border-radius: 10px; padding: 4px">
-         {[["schedule", "Weekly Schedule"], ["taper", activePhase === 0 ? "May Half Taper" : "Aug Taper"], ["hrv", "HRV Rules"], ["recovery", "Recovery"]].map(([id, label]) => (
-           <button key={id} onclick={() => setActiveTab(id)} style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: activeTab === id ? "#1F2937" : "transparent; color: activeTab === id ? "#E8E4DC" : "#6B7280; cursor: pointer; font-size: 11px; letter-spacing: 0.5px; transition: all 0.2s">
-             {label}
-           </button>
-         ))}
-       </div>
+function toggleDay(idx) {
+ const card = document.getElementById('day-' + idx);
+ card.classList.toggle('open');
+}
 
-       <!-- Schedule Tab -->
-       {activeTab === "schedule" && (
-         <div style="display: flex; flex-direction: column; gap: 8px">
-           {phase.schedule.map((day, i) => {
-             const isOpen = expandedDay === i;
-             return (
-               <div key={day.day} style={{
-                 borderRadius: "12px",
-                 background: isOpen ? "#111827" : "#0D0D14",
-                 border: `1px solid ${isOpen ? "#2D3748" : "#1A1A28"}`,
-                 overflow: "hidden", transition: "all 0.2s"
-               }}>
-                 <button onclick={() => setExpandedDay(isOpen ? null : i)} style="width: 100%; padding: 14px 18px; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 12px; text-align: left">
-                   <div style="width: 90px; font-size: 13px; color: #9CA3AF; font-family: 'Georgia'">{day.day}</div>
-                   <div style={{
-                     padding: "3px 10px", borderRadius: "20px",
-                     background: `${day.tagColor}20`, color: day.tagColor,
-                     fontSize: "10px", letterSpacing: "1.5px", fontFamily: "monospace", flex: 1
-                   }}>
-                     {day.tag}
-                   </div>
-                   <div style="color: #4B5563; font-size: 16px; transition: transform 0.2s; transform: isOpen ? "rotate(180deg)" : "none">↓</div>
-                 </button>
-
-                 {isOpen && (
-                   <div style="padding: 0 18px 18px; display: flex; flex-direction: column; gap: 12px">
-                     {day.sessions.map((s, j) => (
-                       <div key={j} style={{
-                         padding: "14px 16px", borderRadius: "8px",
-                         background: "#0A0A0F", borderLeft: `3px solid ${day.tagColor}60`
-                       }}>
-                         <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 6px">
-                           <div style="font-size: 14px; color: #E8E4DC; font-weight: 600">{s.type}</div>
-                           {s.duration !== "—" && <div style="font-size: 12px; color: #6B7280">{s.duration}</div>}
-                         </div>
-                         {s.hr && <div style="font-size: 12px; color: phase.color; margin-bottom: 6px">♥ {s.hr}</div>}
-                         <div style="font-size: 13px; color: #9CA3AF; font-style: italic">{s.notes}</div>
-                       </div>
-                     ))}
-                   </div>
-                 )}
-               </div>
-             );
-           })}
-         </div>
-       )}
-
-       <!-- Taper Tab -->
-       {activeTab === "taper" && (
-         <div style="display: flex; flex-direction: column; gap: 10px">
-           <div style="font-size: 13px; color: #6B7280; margin-bottom: 8px; font-style: italic">
-             {activePhase === 0 ? "3-week taper leading into the May half marathon:" : "2-week taper leading into the August triathlon:"}
+function renderSchedule() {
+ const d = data[currentPhase];
+ const container = document.getElementById('tab-schedule');
+ container.innerHTML = d.schedule.map((day, i) => `
+   <div class="day-card" id="day-${i}">
+     <button class="day-header" onclick="toggleDay(${i})">
+       <div class="day-name">${day.day}</div>
+       <div class="day-tag" style="background:${day.tagColor}20;color:${day.tagColor}">${day.tag}</div>
+       <div class="day-arrow">↓</div>
+     </button>
+     <div class="day-body">
+       ${day.sessions.map(s => `
+         <div class="session" style="border-left:3px solid ${day.tagColor}60">
+           <div class="session-top">
+             <div class="session-name">${s.type}</div>
+             ${s.duration !== '—' ? `<div class="session-dur">${s.duration}</div>` : ''}
            </div>
-           {(activePhase === 0 ? maytaper : [
-             { week: "2 weeks out", action: "Drop run and bike volume 25%. Keep one speed session but half the reps. Swim stays normal — it doesn't fatigue legs." },
-             { week: "Race week", action: "Short easy run Monday, 20-min easy bike with 3 race-effort surges Wednesday, full rest Thursday–Friday. Light swim Saturday morning if it calms nerves." }
-           ]).map((t, i) => (
-             <div key={i} style="padding: 16px 18px; border-radius: 10px; background: #111827; border: 1px solid #1F2937">
-               <div style="font-size: 12px; color: phase.color; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase">{t.week}</div>
-               <div style="font-size: 14px; color: #D1C9BC; line-height: 1.6">{t.action}</div>
-             </div>
-           ))}
-           <div style="margin-top: 8px; padding: 14px 18px; border-radius: 10px; background: #0D1117; border: 1px solid #1F2937; font-size: 13px; color: #6B7280; font-style: italic; line-height: 1.7">
-             The fitness is already built. Taper is about arriving fresh, not gaining more fitness. Resist the urge to squeeze in extra sessions.
-           </div>
+           ${s.hr ? `<div class="session-hr" style="color:${d.color}">♥ ${s.hr}</div>` : ''}
+           <div class="session-notes">${s.notes}</div>
          </div>
-       )}
-
-       <!-- HRV Tab -->
-       {activeTab === "hrv" && (
-         <div style="display: flex; flex-direction: column; gap: 8px">
-           <div style="font-size: 13px; color: #6B7280; margin-bottom: 8px; font-style: italic">
-             Check your Garmin HRV every morning before deciding on the day's session intensity.
-           </div>
-           {hrv_rules.map((r, i) => (
-             <div key={i} style="padding: 16px 18px; border-radius: 10px; background: #111827; border: 1px solid #1F2937; display: flex; flex-direction: column; gap: 8px">
-               <div style="font-size: 12px; color: #EF4444; letter-spacing: 0.5px">IF: {r.condition}</div>
-               <div style="font-size: 13px; color: #D1C9BC; line-height: 1.6">→ {r.action}</div>
-             </div>
-           ))}
-         </div>
-       )}
-
-       <!-- Recovery Tab -->
-       {activeTab === "recovery" && (
-         <div style="display: grid; grid-template-columns: repeat(auto-fill; gap: 10px">
-           {recovery_stack.map((r, i) => (
-             <div key={i} style="padding: 18px; border-radius: 10px; background: #0D1117; border: 1px solid #1F2937">
-               <div style="font-size: 24px; margin-bottom: 10px">{r.icon}</div>
-               <div style="font-size: 13px; color: #E8E4DC; margin-bottom: 6px; font-weight: 600">{r.label}</div>
-               <div style="font-size: 12px; color: #6B7280; line-height: 1.6">{r.detail}</div>
-             </div>
-           ))}
-         </div>
-       )}
-
-       <div style="margin-top: 40px; padding: 20px; border-radius: 12px; background: #0D1117; border: 1px solid #1F2937; text-align: center">
-         <div style="font-size: 12px; color: #6B7280; line-height: 1.9">
-           You already have the running distance. Now it's about <span style="color: #E8E4DC">sharpening speed, building swim & bike,</span><br>
-           and letting your body recover enough to actually absorb the training.
-         </div>
-       </div>
+       `).join('')}
      </div>
    </div>
- );
+ `).join('');
 }
-     </div>
+
+function renderTaper() {
+ const d = data[currentPhase];
+ const container = document.getElementById('taper-cards');
+ container.innerHTML = d.taper.map(t => `
+   <div class="taper-card">
+     <div class="taper-week" style="color:${d.color}">${t.week}</div>
+     <div class="taper-action">${t.action}</div>
+   </div>
+ `).join('');
+}
+
+// Init
+renderSchedule();
+renderTaper();
+</script>
 
 </body>
-
 </html>
